@@ -1,0 +1,4 @@
+CREATE TABLE Challenge (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    Challenge VARCHAR(255) NOT NULL,
+);
