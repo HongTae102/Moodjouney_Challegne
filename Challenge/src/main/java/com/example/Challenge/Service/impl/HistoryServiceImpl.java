@@ -19,12 +19,13 @@ public class HistoryServiceImpl implements HistoryService {
     private HistoryRepo historyRepository;
 
     @Override
-    public History addHistory(String description, MultipartFile imageFile) throws IOException {
+    public History addHistory(String description, MultipartFile imageFile, String email) throws IOException {
         History history = new History();
         history.setDescription(description);
         history.setImage(imageFile.getBytes());
+        history.setEmail(email);
         history.setCreatedDate(LocalDateTime.now());
-        return historyRepository.save(history); 
+        return historyRepository.save(history);
     }
 
     @Override

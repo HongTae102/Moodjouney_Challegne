@@ -11,17 +11,22 @@ const ChallengeHistory = () => {
 
     const fetchHistory = async () => {
         try {
-            const response = await axios.get('http://localhost:8085/api/history/all');
+            const userEmail = localStorage.getItem("userEmail"); // ดึง email จาก Local Storage
+            if (!userEmail) {
+                console.error("User email not found in local storage.");
+                return;
+            }
+    
+            const response = await axios.get(`http://localhost:8085/api/history?email=${userEmail}`); 
             setHistoryData(response.data);
         } catch (error) {
             console.error('Error fetching history:', error);
         }
-    };
+    };    
 
-    // ฟังก์ชันสำหรับฟอร์แมตวันที่
     const formatDate = (dateString) => {
         const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-        return new Date(dateString).toLocaleDateString('en-GB', options); // รูปแบบ DD/MM/YYYY
+        return new Date(dateString).toLocaleDateString('en-GB', options);
     };
 
     return (
@@ -30,7 +35,7 @@ const ChallengeHistory = () => {
             {historyData.length > 0 ? (
                 <div className="history-list">
                     {historyData.map((item) => (
-                        <div className="history-card">
+                        <div className="history-card" key={item.id}>
                             <div className="history-header">
                                 <div className="check-icon">✔</div>
                                 <div className="history-date">{formatDate(item.createdDate)}</div>
@@ -56,10 +61,10 @@ const ChallengeHistory = () => {
                     ))}
                 </div>
             ) : (
-                <p>No history data found.</p>
+                <p>Loading....</p>
             )}
         </div>
-    );
+    );    
 };
 
 export default ChallengeHistory;

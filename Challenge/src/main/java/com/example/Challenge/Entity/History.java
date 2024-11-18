@@ -21,6 +21,7 @@ public class History {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdDate;
 
+    private String email;
 
     public Long getId() {
         return id;
@@ -54,5 +55,12 @@ public class History {
         this.createdDate = createdDate;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
     
 }

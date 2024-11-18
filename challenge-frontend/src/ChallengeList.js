@@ -4,6 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import './ChallengeList.css';
 
 const ChallengeList = () => {
+    const [userEmail, setUserEmail] = useState("");
+
+    useEffect(() => {
+        // ดึง Email จาก Local Storage
+        const email = localStorage.getItem("userEmail");
+        if (email) {
+            setUserEmail(email);
+        }
+    }, []);
+
     const [challenges, setChallenges] = useState([]);
     const [randomChallenges, setRandomChallenges] = useState(
         JSON.parse(localStorage.getItem('randomChallenges')) || []
@@ -103,14 +113,16 @@ const ChallengeList = () => {
         setRefreshCount(0);
         event.preventDefault();
 
-        if (!description || !imageFile) {
-            alert("Please select a challenge and an image.");
+        const userEmail = localStorage.getItem("userEmail");
+        if (!description || !imageFile || !userEmail) {
+            alert("กรุณากรอกข้อมูลให้ครบถ้วน!");
             return;
         }
 
         const formData = new FormData();
         formData.append("description", description);
         formData.append("image", imageFile);
+        formData.append("email", userEmail);
 
         try {
             await axios.post('http://localhost:8085/api/history/add', formData, {
@@ -158,7 +170,15 @@ const ChallengeList = () => {
 
 
     return (
-        <><h1 className="daily-challenge-title">Daily Challenge</h1>
+        <>
+            {/* <button
+                type="button"
+                className="challenge-button"
+                onClick={() => navigate('/membership')}
+            >
+                Membership
+            </button> */}
+            <h1 className="daily-challenge-title">Daily Challenge</h1>
             <div className="challenge-container">
                 <button className="refresh-button" onClick={getRandomChallenges}>
                     {3 - refreshCount} <img src="/image/refresh.png" alt="Refresh Challenge" style={{ width: '40px', height: '40px' }} />
@@ -174,8 +194,8 @@ const ChallengeList = () => {
                         </button>
                     ))}
                 </div>
-                <form className="upload-form">
-                    <label htmlFor="file-upload" className="upload-label">
+                <form className="challenge-upload">
+                    <label htmlFor="file-upload" className="challenge-upload-label">
                         อัปโหลดรูป <img src="/image/img.png" alt="Upload Icon" style={{ width: '40px', height: '40px', cursor: 'pointer' }} />
                     </label>
                     <input
@@ -189,7 +209,7 @@ const ChallengeList = () => {
                 <div className="challenge-main-content">
                     <div className="challenge-text-and-image">
                         <div className="challenge-description">
-                            <h2>ชาเลนจ์ของคุณคือ!!</h2>
+                            <h2 className='challenge-h2'>ชาเลนจ์ของคุณคือ!!</h2>
                             {randomChallenges.length > 0 ? (
                                 <p className="challenge-text">{randomChallenges[selectedIndex]?.challenge}</p>
                             ) : (
@@ -206,9 +226,9 @@ const ChallengeList = () => {
                         </div>
                     </div>
                 </div>
-                <form onSubmit={handleSubmit} className="submit-form">
-                    <button type="submit" className="button" onClick={() => navigate('/history')}>Challenge History</button>
-                    <button type="submit" className="button">Submit Challenge</button>
+                <form onSubmit={handleSubmit} className="challenge-submit">
+                    <button type="button" className="challenge-button" onClick={() => navigate('/history')}>Challenge History</button>
+                    <button type="submit" className="challenge-button">Submit Challenge</button>
                 </form>
                 {showPopup && encourage && (
                     <EncouragePopup
